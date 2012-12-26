@@ -14,14 +14,15 @@ class AboutSandwichCode < EdgeCase::Koan
   end
 
   def test_counting_lines
-    assert_equal __, count_lines("example_file.txt")
+    assert_equal 4, count_lines("example_file.txt")
   end
 
   # ------------------------------------------------------------------
 
   def find_line(file_name)
     file = open(file_name)
-    while line = file.gets
+    while line = file.gets # returns the next line of the file as a string
+													 # or nil if we reach the end of the file
       return line if line.match(/e/)
     end
   ensure
@@ -29,7 +30,7 @@ class AboutSandwichCode < EdgeCase::Koan
   end
 
   def test_finding_lines
-    assert_equal __, find_line("example_file.txt")
+    assert_equal "test\n", find_line("example_file.txt")
   end
 
   # ------------------------------------------------------------------
@@ -74,23 +75,34 @@ class AboutSandwichCode < EdgeCase::Koan
   end
 
   def test_counting_lines2
-    assert_equal __, count_lines2("example_file.txt")
+    assert_equal 4, count_lines2("example_file.txt")
   end
 
   # ------------------------------------------------------------------
 
-  def find_line2(file_name)
+	def find_line2(file_name)
+		file_sandwich(file_name) do |f|
+			while line = f.gets
+				if(line.match(/e/)) 
+					return line;
+				end
     # Rewrite find_line using the file_sandwich library function.
-  end
+			end
+		end
+	end
 
   def test_finding_lines2
-    assert_equal __, find_line2("example_file.txt")
+    assert_equal "test\n", find_line2("example_file.txt")
   end
 
   # ------------------------------------------------------------------
+	
+	# File.open is a "sandwich code wrapper" that allows file processing in a block
+	# and the then closes the file when it goes out of scope (the integration
+	# of the block works with a yield function
 
   def count_lines3(file_name)
-    open(file_name) do |file|
+    File.open(file_name) do |file|
       count = 0
       while line = file.gets
         count += 1
@@ -100,7 +112,7 @@ class AboutSandwichCode < EdgeCase::Koan
   end
 
   def test_open_handles_the_file_sandwich_when_given_a_block
-    assert_equal __, count_lines3("example_file.txt")
+    assert_equal 4, count_lines3("example_file.txt")
   end
-
 end
+

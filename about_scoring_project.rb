@@ -17,7 +17,6 @@ require File.expand_path(File.dirname(__FILE__) + '/edgecase')
 #
 # * Everything else is worth 0 points.
 #
-#
 # Examples:
 #
 # score([1,1,1,5,1]) => 1150 points
@@ -29,8 +28,72 @@ require File.expand_path(File.dirname(__FILE__) + '/edgecase')
 #
 # Your goal is to write the score method.
 
+# Takes in an array and returns the triple type
+# if there is a triple and nil otherwise
+def find_triple(dice)
+	if(dice.empty?)
+		return nil;
+	end
+	dice.each do |test_die|
+		#Counting the number of appearances
+		count = dice.inject(0) do |memo, die|
+			if (test_die == die)
+				memo + 1;	# 1st 'return'
+													# IMPORTANT point on inject:
+													# you need to make sure that you
+													# are always returning something
+													# if it is a block we use Ruby's
+													# a 'pseudo' returning
+			else
+				memo;      # 2nd 'return'
+			end
+		end
+		if (count >= 3)
+			return test_die;
+		end
+	end
+	return nil;
+end
+
+# Returns the score for a given die
+# that is assumed not to be part of a triple
+def num_score(die)
+	# Ruby switch statement
+	case die
+	when 1
+		return 100;
+	when 5
+		return 50;
+	else
+		return 0;
+	end
+end
+
+# Return the score for the triple of the
+# given die value
+def triple_score(die)
+	case die
+	when nil
+		return 0;
+	when 1
+		return 1000;
+	else
+		return die * 100;
+	end
+end
+
 def score(dice)
-  # You need to write this method
+	triple_num = find_triple(dice);
+	total = triple_score(triple_num);
+	triple_count = 0;
+	for die in dice
+		unless (die == triple_num && triple_count < 3)
+			total += num_score(die)	
+		else
+			triple_count += 1;
+		end
+	end
+	return total;
 end
 
 class AboutScoringProject < EdgeCase::Koan
