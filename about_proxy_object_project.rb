@@ -37,7 +37,8 @@ class Proxy
 
 	# Good article on Ruby SPLAT "*" 
 	# http://endofline.wordpress.com/2011/01/21/the-strange-ruby-splat/
-
+	# Good answer to how * and proc works for method forwarding
+	# http://stackoverflow.com/questions/14047942/ruby-koans-about-message-passing-send-block-arguments/14047984#14047984e
 	def method_missing(method_name, *args, &block)
 		# This if statement is actually unecessary since
 		# if we pass a bad method, the original object will
