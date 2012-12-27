@@ -13,12 +13,50 @@ require File.expand_path(File.dirname(__FILE__) + '/edgecase')
 # of the Proxy class is given in the AboutProxyObjectProject koan.
 
 class Proxy
+	#List of methods used
+	attr_accessor :messages;
+
   def initialize(target_object)
     @object = target_object
-    # ADD MORE CODE HERE
+		@messages = [];
   end
+	
+	def called?(method_name)
+		return @messages.include?(method_name);
+	end
 
-  # WRITE CODE HERE
+	def number_of_times_called(method_name)
+		count = 0;
+		for msg in messages do
+			if (msg == method_name)
+				count += 1;
+			end
+		end
+		return count;
+	end
+
+	# Good article on Ruby SPLAT "*" 
+	# http://endofline.wordpress.com/2011/01/21/the-strange-ruby-splat/
+
+	def method_missing(method_name, *args, &block)
+		# This if statement is actually unecessary since
+		# if we pass a bad method, the original object will
+		# already raise the error
+		if (@object.respond_to?(method_name))
+			#puts @messages
+			#puts method_name
+			#puts @object
+			@messages << method_name;
+			# The * and & say to treat the arguments as 
+			# var args and a block specifically (because when they
+			# pass
+		  return @object.__send__(method_name, *args, &block);
+		else
+			raise(NoMethodError.new("Method missing"));
+		end
+	end
+
+
 end
 
 # The proxy object should pass the following Koan:
